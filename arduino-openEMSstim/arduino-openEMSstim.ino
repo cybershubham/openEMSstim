@@ -11,7 +11,7 @@
 #include "AltSoftSerial.h"
 #include "Wire.h"
 #include "AD5252.h"
-#include "Rn4020BTLe.h"
+//#include "Rn4020BTLe.h"
 #include "EMSSystem.h"
 #include "EMSChannel.h"
 #include "avr/pgmspace.h"
@@ -44,7 +44,7 @@ void printer(String msg, boolean force = false) {
 //Initialization of control objects
 AltSoftSerial softSerial;
 AD5252 digitalPot(0);
-Rn4020BTLe bluetoothModule(2, &softSerial);
+//Rn4020BTLe bluetoothModule(2, &softSerial);
 EMSChannel emsChannel1(5, 4, A2, &digitalPot, 1, chan1, HIGH);
 EMSChannel emsChannel2(6, 7, A3, &digitalPot, 3, chan2, HIGH); 
 EMSChannel emsChannel3(5, 4, A2, &digitalPot, 1, chan3, HIGH);
@@ -52,19 +52,21 @@ EMSChannel emsChannel4(6, 7, A3, &digitalPot, 3, chan4, HIGH);
 EMSSystem emsSystem(4);
 
 void setup() {
-	Serial.begin(19200);
+	Serial.begin(57600);
+  softSerial.begin(57600);
 	softSerial.setTimeout(100);
 	Serial.setTimeout(50);
 	printer("\nSETUP:");
 	Serial.flush();
 
 	//Reset and Initialize the Bluetooth module
-	printer("\tBT: RESETTING");
+	/*printer("\tBT: RESETTING");
 	bluetoothModule.reset();
 	printer("\tBT: RESET DONE");
 	printer("\tBT: INITIALIZING");
 	bluetoothModule.init(EMS_BLUETOOTH_ID);
 	printer("\tBT: INITIALIZED");
+	*/
 
 	//Add the EMS channels and start the control
 	printer("\tEMS: INITIALIZING CHANNELS");
@@ -72,9 +74,7 @@ void setup() {
   emsSystem.addChannelToSystem(&emsChannel2);
   emsSystem.addChannelToSystem(&emsChannel3);
   emsSystem.addChannelToSystem(&emsChannel4);
-  
   emsSystem.enableMultiplex();    //Required to activate multiplexed output
-	
 	EMSSystem::start();
 	printer("\tEMS: INITIALIZED");
 	printer("\tEMS: STARTED");
